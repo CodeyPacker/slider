@@ -118,7 +118,77 @@ parcelRequire = (function (modules, cache, entry, globalName) {
 
   return newRequire;
 })({"src/slider.js":[function(require,module,exports) {
+function Slider(slider) {
+  if (!(slider instanceof Element)) {
+    // if an element isn't passed in
+    throw new Error('No slider passed in');
+  }
 
+  var prev;
+  var current;
+  var next; // select elements needed for the slider
+
+  var slides = slider.querySelector('.slides');
+  var prevButton = slider.querySelector('.goToPrev');
+  var nextButton = slider.querySelector('.goToNext');
+
+  function startSlider() {
+    current = slider.querySelector('.current') || slides.firstElementChild;
+    prev = current.previousElementSibling || slides.lastElementChild;
+    next = current.nextElementSibling || slides.firstElementChild;
+  }
+
+  function applyClasses() {
+    current.classList.add('current');
+    prev.classList.add('prev');
+    next.classList.add('next');
+  }
+
+  function move(direction) {
+    var _prev$classList, _current$classList, _next$classList;
+
+    // first strip all the classes off the current slides
+    var classesToRemove = ['prev', 'current', 'next'];
+
+    (_prev$classList = prev.classList).remove.apply(_prev$classList, classesToRemove);
+
+    (_current$classList = current.classList).remove.apply(_current$classList, classesToRemove);
+
+    (_next$classList = next.classList).remove.apply(_next$classList, classesToRemove); // OR be a hotshot and do it in one line
+    // [prev, current, next].forEach(el => el.classList.remove(...classesToRemove));
+    // use destructuring to easily shift them around
+
+
+    if (direction === 'back') {
+      var _ref = [// get the prev slide, if there is none, get hte last slide
+      // from the entire slider for wrapping
+      prev.previousElementSibling || slides.lastElementChild, prev, current];
+      prev = _ref[0];
+      current = _ref[1];
+      next = _ref[2];
+    } else {
+      var _ref2 = [current, next, next.nextElementSibling || slides.firstElementChild];
+      prev = _ref2[0];
+      current = _ref2[1];
+      next = _ref2[2];
+    } // now that the elements have been updated, reapply classes
+
+
+    applyClasses();
+  } // when this slider is created, run the start slider function
+
+
+  startSlider();
+  applyClasses(); // Event listeners
+
+  prevButton.addEventListener('click', function () {
+    return move('back');
+  });
+  nextButton.addEventListener('click', move);
+}
+
+var mySlider = Slider(document.querySelector('.slider'));
+var dogSlider = Slider(document.querySelector('.dog-slider'));
 },{}],"node_modules/parcel/src/builtins/hmr-runtime.js":[function(require,module,exports) {
 var global = arguments[3];
 var OVERLAY_ID = '__parcel__error__overlay__';
