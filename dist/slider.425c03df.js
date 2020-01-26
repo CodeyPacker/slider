@@ -119,76 +119,88 @@ parcelRequire = (function (modules, cache, entry, globalName) {
   return newRequire;
 })({"src/slider.js":[function(require,module,exports) {
 function Slider(slider) {
+  var _this = this;
+
   if (!(slider instanceof Element)) {
     // if an element isn't passed in
     throw new Error('No slider passed in');
-  }
+  } // select elements needed for the slider
 
-  var prev;
-  var current;
-  var next; // select elements needed for the slider
 
-  var slides = slider.querySelector('.slides');
+  this.slides = slider.querySelector('.slides');
+  this.slider = slider;
   var prevButton = slider.querySelector('.goToPrev');
-  var nextButton = slider.querySelector('.goToNext');
+  var nextButton = slider.querySelector('.goToNext'); // when this slider is created, run the start slider function
 
-  function startSlider() {
-    current = slider.querySelector('.current') || slides.firstElementChild;
-    prev = current.previousElementSibling || slides.lastElementChild;
-    next = current.nextElementSibling || slides.firstElementChild;
-  }
-
-  function applyClasses() {
-    current.classList.add('current');
-    prev.classList.add('prev');
-    next.classList.add('next');
-  }
-
-  function move(direction) {
-    var _prev$classList, _current$classList, _next$classList;
-
-    // first strip all the classes off the current slides
-    var classesToRemove = ['prev', 'current', 'next'];
-
-    (_prev$classList = prev.classList).remove.apply(_prev$classList, classesToRemove);
-
-    (_current$classList = current.classList).remove.apply(_current$classList, classesToRemove);
-
-    (_next$classList = next.classList).remove.apply(_next$classList, classesToRemove); // OR be a hotshot and do it in one line
-    // [prev, current, next].forEach(el => el.classList.remove(...classesToRemove));
-    // use destructuring to easily shift them around
-
-
-    if (direction === 'back') {
-      var _ref = [// get the prev slide, if there is none, get hte last slide
-      // from the entire slider for wrapping
-      prev.previousElementSibling || slides.lastElementChild, prev, current];
-      prev = _ref[0];
-      current = _ref[1];
-      next = _ref[2];
-    } else {
-      var _ref2 = [current, next, next.nextElementSibling || slides.firstElementChild];
-      prev = _ref2[0];
-      current = _ref2[1];
-      next = _ref2[2];
-    } // now that the elements have been updated, reapply classes
-
-
-    applyClasses();
-  } // when this slider is created, run the start slider function
-
-
-  startSlider();
-  applyClasses(); // Event listeners
+  this.startSlider();
+  this.applyClasses(); // Event listeners
 
   prevButton.addEventListener('click', function () {
-    return move('back');
+    return _this.move('back');
   });
-  nextButton.addEventListener('click', move);
+  nextButton.addEventListener('click', function () {
+    return _this.move();
+  });
 }
 
-var mySlider = Slider(document.querySelector('.slider'));
-var dogSlider = Slider(document.querySelector('.dog-slider'));
+Slider.prototype.startSlider = function () {
+  this.current = this.slider.querySelector('.current') || this.slides.firstElementChild;
+  this.prev = this.current.previousElementSibling || this.slides.lastElementChild;
+  this.next = this.current.nextElementSibling || this.slides.firstElementChild;
+};
+
+Slider.prototype.applyClasses = function () {
+  this.current.classList.add('current');
+  this.prev.classList.add('prev');
+  this.next.classList.add('next');
+};
+
+Slider.prototype.move = function (direction) {
+  var _this$prev$classList, _this$current$classLi, _this$next$classList;
+
+  // first strip all the classes off the current slides
+  var classesToRemove = ['prev', 'current', 'next'];
+
+  (_this$prev$classList = this.prev.classList).remove.apply(_this$prev$classList, classesToRemove);
+
+  (_this$current$classLi = this.current.classList).remove.apply(_this$current$classLi, classesToRemove);
+
+  (_this$next$classList = this.next.classList).remove.apply(_this$next$classList, classesToRemove); // OR be a hotshot and do it in one line
+  // [prev, current, next].forEach(el => el.classList.remove(...classesToRemove));
+  // use destructuring to easily shift them around
+
+
+  if (direction === 'back') {
+    var _ref = [// get the prev slide, if there is none, get hte last slide
+    // from the entire slider for wrapping
+    this.prev.previousElementSibling || this.slides.lastElementChild, this.prev, this.current];
+    this.prev = _ref[0];
+    this.current = _ref[1];
+    this.next = _ref[2];
+  } else {
+    var _ref2 = [this.current, this.next, this.next.nextElementSibling || this.slides.firstElementChild];
+    this.prev = _ref2[0];
+    this.current = _ref2[1];
+    this.next = _ref2[2];
+  }
+
+  this.applyClasses();
+};
+
+var mySlider = new Slider(document.querySelector('.slider'));
+window.addEventListener('keyup', function (e) {
+  if (e.key === 'ArrowRight') {
+    mySlider.move();
+  }
+
+  ;
+
+  if (e.key === 'ArrowLeft') {
+    mySlider.move('back');
+  }
+
+  ;
+});
 },{}],"node_modules/parcel/src/builtins/hmr-runtime.js":[function(require,module,exports) {
 var global = arguments[3];
 var OVERLAY_ID = '__parcel__error__overlay__';
@@ -217,7 +229,7 @@ var parent = module.bundle.parent;
 if ((!parent || !parent.isParcelRequire) && typeof WebSocket !== 'undefined') {
   var hostname = "" || location.hostname;
   var protocol = location.protocol === 'https:' ? 'wss' : 'ws';
-  var ws = new WebSocket(protocol + '://' + hostname + ':' + "61624" + '/');
+  var ws = new WebSocket(protocol + '://' + hostname + ':' + "64049" + '/');
 
   ws.onmessage = function (event) {
     checkedAssets = {};
